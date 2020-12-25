@@ -1,26 +1,16 @@
 #written by: Raneem Tarfa
 
 import urllib.request
-# import pycountry
-#import re
-import language_codes
+#note: can transform this to retreive random facts about the song from the net
 
 from googletrans import Translator
 translator = Translator()
 
-# text = input("Type the lyrics you would like translated:")
 
 
-# translation = translator.translate(text, dest='en')
-# print(translation.text)
 
-# from googleapiclient.discovery import build
-# my_api_key = "AIzaSyDKVJrlIN47TCjcLmdN4DHt7tfnAjyAsgw"
-# my_cse_id = "0905f59fbfc5fd4ba"
-
-
-artist_name= input("Input the artist name: ").strip().replace(" ","").lower()
-song_title= input("Input your song title (please include accents): ").strip().replace(" ","").lower()
+artist_name= input("Input the artist name: ").strip().lower()
+song_title= input("Input your song title (please include accents): ").strip().lower()
 dest_lang= input("Translate to: ")
 
 # def lyric_search(search_term, api_key, cse_id, **kwargs):
@@ -31,35 +21,36 @@ dest_lang= input("Translate to: ")
 # result = lyric_search(artist_name+" "+song_title, my_api_key, my_cse_id)
 # print(result) #print anything that starts with https://www.azlyrics.com/lyrics/artist/song.html
 
-#if any of letters in song title or artist name has an accent or apostrophe/punctuation remove it
+try:
+    # if any of letters in song title or artist name has an accent or apostrophe/punctuation remove it
+    artist_name = artist_name.replace(" ","")
+    song_title = song_title.replace(" ","")
+    foreign_letters = "àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûðÂÊÎÔÛÐãñõÃÑÕäëïöüÿÄËÏÖÜŸåÅæœÆŒßçÇøØ¿¡"
 
-foreign_letters="àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûðÂÊÎÔÛÐãñõÃÑÕäëïöüÿÄËÏÖÜŸåÅæœÆŒßçÇøØ¿¡"
+    # this is very slow.. diff way to do this?
+    for char in artist_name:
+        if char in foreign_letters:
+            artist_name = artist_name.replace(char, "")
 
-for char in artist_name:
-    if char in foreign_letters:
-        artist_name=artist_name.replace(char,"")
+    for char in song_title:
+        if char in foreign_letters:
+            song_title = song_title.replace(char, "")
 
-for char in song_title:
-    if char in foreign_letters:
-        song_title=song_title.replace(char, "")
-
-url= "https://www.azlyrics.com/lyrics/"+artist_name+"/"+song_title+".html"
-fstream = urllib.request.urlopen(url)
-page_text = fstream.read().decode('utf-8').strip()
-#print(page_text)
-#
-# lyric_matcher=r'Sorry about that. -->([^ ]*)'
-# lyric_finder=re.compile(lyric_matcher)
-
-start = 'Sorry about that. -->'
-end = '<!-- MxM banner -->'
-s = page_text
-s=(s.split(start))[1].split(end)[0]
-
-lyrics=s.replace("<br>","").replace("</div>","").replace("</i>","")
-#print(lyrics)
-
-#dest_code = pycountry.scripts.get(name=dest_lang)
+    url= "https://www.azlyrics.com/lyrics/"+artist_name+"/"+song_title+".html"
+    fstream = urllib.request.urlopen(url)
+    page_text = fstream.read().decode('utf-8').strip()
+    start = 'Sorry about that. -->'
+    end = '<!-- MxM banner -->'
+    s = page_text
+    s=(s.split(start))[1].split(end)[0]
+    lyrics=s.replace("<br>","").replace("</div>","").replace("</i>","").replace("<i>","")
+except:
+    #for foreign songs, replace letter with eng counterpart (use a dict for this)
+    artist_name = artist_name.replace(" ", "-")
+    song_title = song_title.replace(" ", "-")
+    url= "https://genius.com/"+artist_name+"-"+song_title+"-lyrics"
+    fstream = urllib.request.urlopen(url)
+    page_text = fstream.read().decode('utf-8').strip()
 
 translation = translator.translate(lyrics, dest=dest_lang)
 print(translation.text)
