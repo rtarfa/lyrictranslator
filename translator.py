@@ -13,13 +13,6 @@ artist_name= input("Input the artist name: ").strip().lower()
 song_title= input("Input your song title (please include accents): ").strip().lower()
 dest_lang= input("Translate to: ")
 
-# def lyric_search(search_term, api_key, cse_id, **kwargs):
-#     service = build("customsearch", "v1", developerKey=api_key)
-#     res = service.cse().list(q=search_term, cx=cse_id, **kwargs).execute()
-#     return res
-#
-# result = lyric_search(artist_name+" "+song_title, my_api_key, my_cse_id)
-# print(result) #print anything that starts with https://www.azlyrics.com/lyrics/artist/song.html
 
 try:
     # if any of letters in song title or artist name has an accent or apostrophe/punctuation remove it
@@ -27,7 +20,6 @@ try:
     song_title = song_title.replace(" ","")
     foreign_letters = "àèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûðÂÊÎÔÛÐãñõÃÑÕäëïöüÿÄËÏÖÜŸåÅæœÆŒßçÇøØ¿¡"
 
-    # this is very slow.. diff way to do this?
     for char in artist_name:
         if char in foreign_letters:
             artist_name = artist_name.replace(char, "")
@@ -54,28 +46,3 @@ except:
 
 translation = translator.translate(lyrics, dest=dest_lang)
 print(translation.text)
-
-#issues:
-
-#should try to let ppl write without accents (maybe need to do a google search instead..)
-#prob num 2- doesnt have original text (i.e. arabic or korean and google translate can't do romanisation
-#prob num 3- prints 3 times if has romanization, original, and translation
-        #     (maybe if '[English translation:]' on page, print everything after that
-
-#not all results show up (i.e. stromae)
-#artists have different names (bangtan vs BTS)
-#maybe do a try: except: print azlyrics does not have this song
-#need dictionary keys depending on destination language
-#https://sites.google.com/site/opti365/translate_codes
-
-#do a strip/split <i>[?]</i> and that kind of stuff
-
-#https://www.w3schools.com/python/python_json.asp
-#https://linuxhint.com/google_search_api_python/
-#https://pypi.org/project/googletrans/
-
-
-#maybe print original ("original (english)") on left, translated ("translated (spanish)") lang on right
-
-#in the try, catch: can look at other sites as well to see as many sites as possible, keep doing that
-
